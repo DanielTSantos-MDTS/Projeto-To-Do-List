@@ -1,0 +1,29 @@
+{
+  "name": "to-do-list",
+  "version": "1.0.0",
+  "description": "Lista de Afazeres",
+  "homepage": "https://github.com/DanielTSantos-MDTS/Lista-de-Afazeres#readme",
+  "bugs": {
+    "url": "https://github.com/DanielTSantos-MDTS/Lista-de-Afazeres/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielTSantos-MDTS/Lista-de-Afazeres.git"
+  },
+  "license": "ISC",
+  "author": "Daniel TS",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "pg": "^8.20.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.8"
+  },
+  "keywords": []
+}
