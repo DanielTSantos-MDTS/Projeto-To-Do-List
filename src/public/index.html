@@ -31,7 +31,8 @@
                 div.className = `tarefa ${t.concluida ? 'concluida' : ''}`;
                 div.innerHTML = `
                 <span>${t.titulo}</span>
-                <button onclick="deletarTarefa(${t.id})">🗑️</button>"
+                <button onclick="atualizarTarefa(${t.id}, ${t.concluida ? 'false' : 'true'})"> Concluir </button>
+                <button onclick="deletarTarefa(${t.id})">🗑️</button>
                 `;
                 lista.appendChild(div);
             })
@@ -51,10 +52,20 @@
             carregarTarefas();
         }
 
+        async function atualizarTarefa(id, novoStatus){
+            await fetch(`${API_URL}/${id}`, { 
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ concluida: novoStatus })
+            })
+            carregarTarefas();
+        }
+
         async function deletarTarefa(id){
             await fetch(`${API_URL}/${id}`, { method: 'DELETE'});
             carregarTarefas();
         }
+
 
         carregarTarefas();
     </script>
