@@ -3,8 +3,8 @@ const Tarefa = require('../models/Tarefa');
 module.exports = {
     async criar(req, res){
         try{
-            const { titulo } = req.body;
-            const novaTarefa = await Tarefa.create({ titulo });
+            const { titulo, autor } = req.body;
+            const novaTarefa = await Tarefa.create({ titulo, autor });
             return res.status(201).json(novaTarefa);
         } catch (error){
             res.status(500).json('Erro ao criar a tarefa. Erro: ', error);
@@ -21,7 +21,7 @@ module.exports = {
     async atualizar(req, res){
         try{
             const { id } = req.params;
-            const { titulo, concluida} = req.body;
+            const { titulo, status} = req.body;
 
             const tarefa = await Tarefa.findByPk(id);
 
@@ -29,7 +29,7 @@ module.exports = {
                 return res.status(404).json({ Erro: "Tarefa não encontrada"});
             }
             tarefa.titulo = titulo || tarefa.titulo;
-            tarefa.concluida = concluida !== undefined ? concluida: tarefa.concluida;
+            tarefa.status = status !== undefined ? status : tarefa.status;
 
             await tarefa.save();
 

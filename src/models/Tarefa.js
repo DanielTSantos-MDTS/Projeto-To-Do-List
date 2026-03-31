@@ -6,9 +6,13 @@ const Tarefa = db.define('Tarefa', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    concluida: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
+    status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'todo'
+    },
+    autor: {
+        type: DataTypes.STRING
     }
 });
 

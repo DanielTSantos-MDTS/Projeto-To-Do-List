@@ -6,57 +6,102 @@
     <title>Minha To-Do-List</title>
     <style>
         body { font-family: sans-serif; max-width: 500px; margin: 50px auto; }
-        .tarefa { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ccc; }
-        .concluida { text-decoration: line-through; color: gray; }
+        .tarefa { background: white; padding: 10px; margin: 10px 0; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+        .doing{ color: yellow;}
+        .done { text-decoration: line-through; color: gray; }
+        #listaTarefas{display: flex; gap: 20px;}
+        #todoSection {flex: 1; background: #f4f4f4; justify-content: center;}
+        #doingSection{flex: 1; background: #f4f4f4;}
+        #doneSection {flex: 1; background: #f4f4f4;}
     </style>
 </head>
 <body>
     <h1>Minhas Tarefas</h1>
-    <input type="text" id="inputTarefa" placeholder="Nova tarefa...">
-    <button onclick="adicionarTarefa()">Adicionar</button>
+    <form id="formTarefa">
+        <input type="text" id="tituloTarefa" placeholder="Nova tarefa..." required>
+        <input type="text" id="autorTarefa" placeholder="Quem vai fazer?" required>
+        <button type="submit" id="adicionar">Adicionar</button>
+    </form>
 
-    <div id="listaTarefas"></div>
+    <section id="listaTarefas">
+        <section id="todoSection">
+            <h2>Lista para Fazer</h1>
+            <div id="todoList">
+
+            </div>
+        </section>
+        <section id="doingSection">
+            <h2>Fazendo</h1>
+            <div id="doingList">
+
+            </div>
+            
+        </section>
+        <section id="doneSection">
+            <h2>Finalizados</h1>
+            <div id="doneList">
+                
+            </div>
+            
+        </section>
+    </section>
 
     <script>
         const API_URL = '/tarefas';
+        const form = document.getElementById('formTarefa');
 
         async function carregarTarefas(){
             const res = await fetch(API_URL);
             const tarefas = await res.json();
-            const lista = document.getElementById('listaTarefas');
-            lista.innerHTML = '';
 
+            
+            ['todoList', 'doingList', 'doneList'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+            
             tarefas.forEach(t => {
                 const div = document.createElement('div');
-                div.className = `tarefa ${t.concluida ? 'concluida' : ''}`;
+                const container = {
+                    'todo' : document.getElementById('todoList'),
+                    'doing': document.getElementById('doingList'),
+                    'done' : document.getElementById('doneList')
+                }
+                div.className = `tarefa ${t.status}`;
+                
+                const fluxo = {
+                    'todo'  : 'doing',
+                    'doing' : 'done',
+                    'done'  : 'todo'
+                };
+                const botao = {
+                    'todo'  : 'Começar',
+                    'doing' : 'Finalizar',
+                    'done'  : 'Reiniciar'
+                }
                 div.innerHTML = `
-                <span>${t.titulo}</span>
-                <button onclick="atualizarTarefa(${t.id}, ${t.concluida ? 'false' : 'true'})"> Concluir </button>
+                <span>${t.titulo}</span> <br>
+                <small>Para: ${t.autor || 'Alguém'}</small>
+                <button onclick="atualizarTarefa(${t.id}, '${fluxo[t.status]}')"> ${botao[t.status]} </button>
                 <button onclick="deletarTarefa(${t.id})">🗑️</button>
                 `;
-                lista.appendChild(div);
+                container[t.status].appendChild(div);
             })
         }
-
-        async function adicionarTarefa(){
-            const input = document.getElementById('inputTarefa');
-            const titulo = input.value;
-            if(!titulo) return;
-
+        
+        async function adicionarTarefa(titulo, autor){
             await fetch (API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ titulo })
+                body: JSON.stringify({ titulo, autor })
             });
-            input.value = "";
             carregarTarefas();
         }
-
+        
         async function atualizarTarefa(id, novoStatus){
             await fetch(`${API_URL}/${id}`, { 
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ concluida: novoStatus })
+                body: JSON.stringify({ status: novoStatus })
             })
             carregarTarefas();
         }
@@ -68,6 +113,15 @@
 
         carregarTarefas();
         setInterval(carregarTarefas, 5000);
-    </script>
+        form.addEventListener('submit', async (event) =>{
+
+            event.preventDefault();
+            const titulo = document.getElementById('tituloTarefa').value;
+            const autor = document.getElementById('autorTarefa').value;
+            adicionarTarefa(titulo, autor);
+
+            form.reset();
+        })
+        </script>
 </body>
 </html>

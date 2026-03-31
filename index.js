@@ -19,7 +19,8 @@ app.get('/', (req, res) => {
 async function testarConexão(){
     try{
         await db.authenticate();
-        await db.sync();
+        await db.sync({ alter: true })
+        .then(() => console.log("Tabela atualizada"));
         console.log('Conexão e Sincronização reaizados com sucesso!');
     } catch (error){
         console.error('Erro ao conectar ou sincronizar. Erro: ', error);
